@@ -37,8 +37,8 @@ const TaskBoard = () => {
       userId: currentUserId,
       deadline: newTaskDeadline ? new Date(newTaskDeadline) : null // Include deadline in task data
     };
-    axios.post(`${API_URL}/tasks`, newTask)
-    .then(response => {
+    axios.post("http://localhost:3000/tasks", newTask)
+      .then(response => {
         setTasks(prev => [...prev, response.data]);
         setNewTaskContent("");
         setNewTaskDeadline(""); // Clear deadline after adding
@@ -49,14 +49,14 @@ const TaskBoard = () => {
   };
 
   const handleDeleteTask = (id) => {
-    axios.delete(`${API_URL}/tasks/${id}`)
+    axios.delete(`http://localhost:3000/tasks/${id}`)
       .then(() => setTasks(prev => prev.filter(task => task.id !== id)))
       .catch(error => console.error("Error deleting task:", error));
   };
 
   const handleUpdateTask = () => {
     if (!editTask.content.trim()) return;
-    axios.put(`${API_URL}/tasks/${editTask.id}`, editTask)
+    axios.put(`http://localhost:3000/tasks/${editTask.id}`, editTask)
       .then(() => {
         setTasks(prev => prev.map(task => task.id === editTask.id ? editTask : task));
         setShowEditModal(false);
@@ -65,7 +65,7 @@ const TaskBoard = () => {
   };
 
   const moveTask = (id, status) => {
-    axios.put(`${API_URL}/tasks/${id}`, { status })
+    axios.put(`http://localhost:3000/tasks/${id}`, { status })
       .then(() => setTasks(prev => prev.map(task => task.id === id ? { ...task, status } : task)))
       .catch(error => console.error("Error moving task:", error));
   };

@@ -14,7 +14,7 @@ const Register = () => {
   const API_URL = process.env.PUBLIC_API_URL;
 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Basic validation
@@ -49,14 +49,14 @@ const Register = () => {
       } else {
         setError('Registration failed. Please try again.');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       // Log the full error to the console
       console.error('Error during registration:', err);
-
-      // If there is a response error, display it
-      if (err.response) {
-        console.error('Backend error:', err.response.data);
-        setError(err.response.data.message || 'Something went wrong. Please try again.');
+    
+      // Check if the error is an AxiosError (which contains the response property)
+      if (axios.isAxiosError(err)) {
+        console.error('Backend error:', err.response?.data);
+        setError(err.response?.data.message || 'Something went wrong. Please try again.');
       } else {
         setError('Something went wrong. Please try again.');
       }
