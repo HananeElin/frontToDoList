@@ -11,7 +11,7 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  const API_URL = process.env.PUBLIC_API_URL;
+//   const API_URL = process.env.PUBLIC_API_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,7 +29,8 @@ const Register = () => {
 
     try {
       // Send registration data to the backend using axios
-      const res = await axios.post(`${API_URL}/auth/register`, {
+    //   console.log(`${process.env.PUBLIC_API_URL}`);
+      const res = await axios.post("https://backendtodolist-production-8d21.up.railway.app/auth/register", {
         name,
         email,
         password,
