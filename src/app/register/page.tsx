@@ -11,6 +11,8 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const API_URL = process.env.PUBLIC_API_URL;
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +30,7 @@ const Register = () => {
 
     try {
       // Send registration data to the backend using axios
-      const res = await axios.post('http://localhost:3000/auth/register', {
+      const res = await axios.post(`${API_URL}/auth/register`, { 
         name,
         email,
         password,

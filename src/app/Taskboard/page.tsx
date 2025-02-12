@@ -13,13 +13,15 @@ const TaskBoard = () => {
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTask, setEditTask] = useState(null);
+  const API_URL = process.env.PUBLIC_API_URL;
+
     const currentUserId = 12; // Replace with actual logic
 
   //  const currentUserId = localStorage.getItem("userId"); // Récupération de l'id stocké
 
    useEffect(() => {
      if (currentUserId) {
-       axios.get(`http://localhost:3000/tasks/user/${currentUserId}`)
+       axios.get(`${API_URL}/tasks/user/${currentUserId}`)
          .then(response => setTasks(response.data))
          .catch(error => console.error("Error loading tasks:", error));
      }
@@ -35,8 +37,8 @@ const TaskBoard = () => {
       userId: currentUserId,
       deadline: newTaskDeadline ? new Date(newTaskDeadline) : null // Include deadline in task data
     };
-    axios.post("http://localhost:3000/tasks", newTask)
-      .then(response => {
+    axios.post(`${API_URL}/tasks`, newTask)
+    .then(response => {
         setTasks(prev => [...prev, response.data]);
         setNewTaskContent("");
         setNewTaskDeadline(""); // Clear deadline after adding
@@ -47,14 +49,14 @@ const TaskBoard = () => {
   };
 
   const handleDeleteTask = (id) => {
-    axios.delete(`http://localhost:3000/tasks/${id}`)
+    axios.delete(`${API_URL}/tasks/${id}`)
       .then(() => setTasks(prev => prev.filter(task => task.id !== id)))
       .catch(error => console.error("Error deleting task:", error));
   };
 
   const handleUpdateTask = () => {
     if (!editTask.content.trim()) return;
-    axios.put(`http://localhost:3000/tasks/${editTask.id}`, editTask)
+    axios.put(`${API_URL}/tasks/${editTask.id}`, editTask)
       .then(() => {
         setTasks(prev => prev.map(task => task.id === editTask.id ? editTask : task));
         setShowEditModal(false);
@@ -63,7 +65,7 @@ const TaskBoard = () => {
   };
 
   const moveTask = (id, status) => {
-    axios.put(`http://localhost:3000/tasks/${id}`, { status })
+    axios.put(`${API_URL}/tasks/${id}`, { status })
       .then(() => setTasks(prev => prev.map(task => task.id === id ? { ...task, status } : task)))
       .catch(error => console.error("Error moving task:", error));
   };

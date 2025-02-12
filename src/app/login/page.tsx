@@ -9,6 +9,9 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const API_URL = process.env.PUBLIC_API_URL;
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +27,9 @@ const Login = () => {
 
     try {
       // Send login data to the backend
-      const res = await axios.post('http://localhost:3000/auth/login', { email, password });
+      // const res = await axios.post('http://localhost:3000/auth/login', { email, password });
+      const res = await axios.post(`${API_URL}/auth/login`, { email, password });
+
 
       if (res.status === 201) {
         console.log('Logged in successfully!');
