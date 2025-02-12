@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/dashboard/page";
 // import Navbar from "@/components/dashboard/page";
 // import TaskBoard from "@/app/Taskboard/page";
 // import Dash from "@/components/dashboard/home";
@@ -33,7 +34,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white` } 
       >
         
-            {/* <Navbar></Navbar> */}
+            <Navbar></Navbar>
             {/* <Dash></Dash> */}
             {/* <TaskBoard></TaskBoard>            */}
         {children}
