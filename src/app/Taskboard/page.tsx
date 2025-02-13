@@ -19,7 +19,7 @@ const TaskBoard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTask, setEditTask] = useState<any>(null);
   
-  const currentUserId = 12;
+  const currentUserId = 1;
 
     // Filter tasks based on search query
     const filteredTasks = tasks.filter((task: any)  => task.content.toLowerCase().includes(searchQuery.toLowerCase()));
