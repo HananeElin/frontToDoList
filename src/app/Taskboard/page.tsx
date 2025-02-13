@@ -11,7 +11,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 const TaskBoard = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [tasks, setTasks] = useState<any>([]);
   const [newTaskContent, setNewTaskContent] = useState("");
   const [newTaskDeadline, setNewTaskDeadline] = useState(""); 
@@ -32,10 +31,7 @@ const currentUserId = 12;
   //     }
   //   }
   // }, []);
-
-    // Filter tasks based on search query
-    const filteredTasks = tasks.filter(task => task.content.toLowerCase().includes(searchQuery.toLowerCase()));
-
+  
   useEffect(() => {
     if (currentUserId) {
       axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user/${currentUserId}`)
@@ -106,22 +102,12 @@ const currentUserId = 12;
 
   return (
     <DndProvider backend={HTML5Backend}>
-  <div className="p-6 flex justify-between bg-white">
-  <div className="flex items-center gap-4 w-full">
- 
-    <input
-      type="text"
-      placeholder="Search tasks"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-      className="p-2 border rounded-lg w-72 text-black" 
-    />
-   
-    <button className="bg-black text-white p-2 rounded-lg ml-auto" onClick={() => setShowModal(true)}>
-      Add Task
-    </button>
-  </div>
-</div>
+      <div className="p-6 flex justify-between bg-white">
+        <h1 className="text-2xl font-bold text-black">Task Board</h1>
+        <button className="bg-black text-white p-2 rounded-lg" onClick={() => setShowModal(true)}>
+          Add Task
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-white">
         {["TODO", "IN_PROGRESS", "DONE"].map(status => (
