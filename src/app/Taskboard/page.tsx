@@ -5,20 +5,26 @@ import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Pencil, Trash } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 // import Cookies from "js-cookie"; 
 // import jwtDecode from "jwt-decode"; // Pour décoder le JWT
 
 
 const TaskBoard = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const [tasks, setTasks] = useState<any>([]);
   const [newTaskContent, setNewTaskContent] = useState("");
-  const [newTaskDeadline, setNewTaskDeadline] = useState(""); 
+  const [newTaskDeadline, setNewTaskDeadline] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTask, setEditTask] = useState<any>(null);
-const currentUserId = 12; 
+  
+  const currentUserId = 12;
+
+    // Filter tasks based on search query
+    const filteredTasks = tasks.filter((task: any)  => task.content.toLowerCase().includes(searchQuery.toLowerCase()));
+
   // useEffect(() => {
   //   // Récupérer le token JWT depuis les cookies
   //   const token = Cookies.get("jwt");
@@ -31,7 +37,7 @@ const currentUserId = 12;
   //     }
   //   }
   // }, []);
-  
+
   useEffect(() => {
     if (currentUserId) {
       axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user/${currentUserId}`)
@@ -47,13 +53,13 @@ const currentUserId = 12;
       content: newTaskContent,
       status: "TODO",
       userId: currentUserId,
-      deadline: newTaskDeadline ? new Date(newTaskDeadline) : null 
+      deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
     };
     axios.post("https://backendtodolist-production-5d7d.up.railway.app/tasks", newTask)
       .then(response => {
         setTasks((prev: any) => [...prev, response.data]);
         setNewTaskContent("");
-        setNewTaskDeadline(""); 
+        setNewTaskDeadline("");
         setShowModal(false);
         toast.success("Task added successfully!");
       })
@@ -67,18 +73,18 @@ const currentUserId = 12;
       axios.delete(`https://backendtodolist-production-5d7d.up.railway.app/tasks/${id}`)
         .then(() => {
           setTasks((prev: any) => prev.filter((task: any) => task.id !== id));
-          toast.success("Task deleted successfully!");  
+          toast.success("Task deleted successfully!");
         })
         .catch(error => {
           console.error("Error deleting task:", error);
-          toast.error("Failed to delete task.");  
+          toast.error("Failed to delete task.");
         });
     } else {
-     
-      toast.info("Task deletion canceled.");  
+
+      toast.info("Task deletion canceled.");
     }
   };
-  
+
 
   const handleUpdateTask = () => {
     if (!(editTask as any).content.trim()) return;
@@ -91,23 +97,34 @@ const currentUserId = 12;
       })
       .catch((error: any) => console.error("Error updating task:", error));
   };
-  
+
   const moveTask = (id: any, status: any) => {
     axios
       .put(`https://backendtodolist-production-5d7d.up.railway.app/tasks/${id}`, { status })
       .then(() => setTasks((prev: any) => prev.map((task: any) => task.id === id ? { ...task, status } : task)))
       .catch((error: any) => console.error("Error moving task:", error));
   };
-  
+
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="p-6 flex justify-between bg-white">
-        <h1 className="text-2xl font-bold text-black">Task Board</h1>
-        <button className="bg-black text-white p-2 rounded-lg" onClick={() => setShowModal(true)}>
-          Add Task
-        </button>
+        <div className="flex items-center gap-4 w-full">
+          {/* Search Bar */}
+          <input
+            type="text"
+            placeholder="Search tasks"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="p-2 border rounded-lg w-72 text-black" // Set text color to black
+          />
+          {/* Add Task Button */}
+          <button className="bg-black text-white p-2 rounded-lg ml-auto" onClick={() => setShowModal(true)}>
+            Add Task
+          </button>
+        </div>
       </div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-white">
         {["TODO", "IN_PROGRESS", "DONE"].map(status => (
