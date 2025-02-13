@@ -66,26 +66,26 @@ const TaskBoard = () => {
     fetchTasks();
   }, []);
 
-  const handleCreateTask = () => {
-    if (!newTaskContent.trim()) return;
-    setLoading(true);
-    const newTask = {
-      content: newTaskContent,
-      status: "TODO",
-      userId: currentUserId,
-      deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
-    };
-    axios.post("https://backendtodolist-production-5d7d.up.railway.app/tasks", newTask ,{withCredentials: true})
-      .then(response => {
-        setTasks((prev: any) => [...prev, response.data]);
-        setNewTaskContent("");
-        setNewTaskDeadline("");
-        setShowModal(false);
-        toast.success("Task added successfully!");
-      })
-      .catch(error => console.error("Error creating task:", error))
-      .finally(() => setLoading(false));
-  };
+  // const handleCreateTask = () => {
+  //   if (!newTaskContent.trim()) return;
+  //   setLoading(true);
+  //   const newTask = {
+  //     content: newTaskContent,
+  //     status: "TODO",
+  //     userId: currentUserId,
+  //     deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
+  //   };
+  //   axios.post("https://backendtodolist-production-5d7d.up.railway.app/tasks", newTask ,{withCredentials: true})
+  //     .then(response => {
+  //       setTasks((prev: any) => [...prev, response.data]);
+  //       setNewTaskContent("");
+  //       setNewTaskDeadline("");
+  //       setShowModal(false);
+  //       toast.success("Task added successfully!");
+  //     })
+  //     .catch(error => console.error("Error creating task:", error))
+  //     .finally(() => setLoading(false));
+  // };
 
   const handleDeleteTask = (id: any) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
