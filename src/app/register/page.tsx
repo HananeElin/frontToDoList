@@ -11,9 +11,8 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-//   const API_URL = process.env.PUBLIC_API_URL;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     // Basic validation
@@ -29,13 +28,12 @@ const Register = () => {
 
     try {
       // Send registration data to the backend using axios
-    //   console.log(`${process.env.PUBLIC_API_URL}`);
-      const res = await axios.post("https://backendtodolist-production-8d21.up.railway.app/auth/register", {
+      const res = await axios.post('https://backendtodolist-production-5d7d.up.railway.app/auth/register', {
         name,
         email,
         password,
         phone,
-      });
+      }, {withCredentials: true});
 
       if (res.status === 201) {
         console.log('User registered successfully!');
@@ -49,14 +47,14 @@ const Register = () => {
       } else {
         setError('Registration failed. Please try again.');
       }
-    } catch (err) {
+    } catch (err: any) {
       // Log the full error to the console
       console.error('Error during registration:', err);
 
       // If there is a response error, display it
-      if ((err as any).response) {
-        console.error('Backend error:', (err as any).response.data);
-        setError((err as any).response.data.message || 'Something went wrong. Please try again.');
+      if (err.response) {
+        console.error('Backend error:', err.response.data);
+        setError(err.response.data.message || 'Something went wrong. Please try again.');
       } else {
         setError('Something went wrong. Please try again.');
       }

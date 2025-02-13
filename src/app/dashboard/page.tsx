@@ -8,7 +8,8 @@ export default function Navbar() {
 
   return (
     <nav className="bg-black p-4 flex justify-between items-center shadow-md">
-      <button className="text-white font-semibold text-xl flex items-center gap-2">
+      <button className="text-white font-semibold text-xl flex items-center gap-2"
+        onClick={() => router.push("/home")}>
         To Do <FaCheck />
       </button>
       <div className="flex space-x-2">

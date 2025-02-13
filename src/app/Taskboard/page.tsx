@@ -1,30 +1,43 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Pencil, Trash } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
+// import Cookies from "js-cookie"; 
+// import jwtDecode from "jwt-decode"; // Pour décoder le JWT
+
 
 const TaskBoard = () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<any>([]);
   const [newTaskContent, setNewTaskContent] = useState("");
-  const [newTaskDeadline, setNewTaskDeadline] = useState(""); // Added deadline state
+  const [newTaskDeadline, setNewTaskDeadline] = useState(""); 
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editTask, setEditTask] = useState(null);
-    const currentUserId = 12; // Replace with actual logic
-    const apiUrl = "http://localhost:3000/tasks";
-  //  const currentUserId = localStorage.getItem("userId"); // Récupération de l'id stocké
-
-   useEffect(() => {
-     if (currentUserId) {
-       axios.get(`${apiUrl}/user/${currentUserId}`)
-         .then(response => setTasks(response.data))
-         .catch(error => console.error("Error loading tasks:", error));
-     }
-   }, [currentUserId]);
-   
+  const [editTask, setEditTask] = useState<any>(null);
+const currentUserId = 12; 
+  // useEffect(() => {
+  //   // Récupérer le token JWT depuis les cookies
+  //   const token = Cookies.get("jwt");
+  //   if (token) {
+  //     try {
+  //       const decodedToken = jwtDecode(token); // Decoder le JWT
+  //       setCurrentUserId(decodedToken.id); // Stocker l'ID utilisateur
+  //     } catch (error) {
+  //       console.error("Erreur lors du decodage du token:", error);
+  //     }
+  //   }
+  // }, []);
+  useEffect(() => {
+    if (currentUserId) {
+      axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user/${currentUserId}`)
+        .then(response => setTasks(response.data))
+        .catch(error => console.error("Error loading tasks:", error));
+    }
+  }, [currentUserId]);
 
   const handleCreateTask = () => {
     if (!newTaskContent.trim()) return;
@@ -33,40 +46,58 @@ const TaskBoard = () => {
       content: newTaskContent,
       status: "TODO",
       userId: currentUserId,
-      deadline: newTaskDeadline ? new Date(newTaskDeadline) : null // Include deadline in task data
+      deadline: newTaskDeadline ? new Date(newTaskDeadline) : null 
     };
-    axios.post("http://localhost:3000/tasks", newTask)
+    axios.post("https://backendtodolist-production-5d7d.up.railway.app/tasks", newTask)
       .then(response => {
-        setTasks(prev => [...prev, response.data]);
+        setTasks((prev: any) => [...prev, response.data]);
         setNewTaskContent("");
-        setNewTaskDeadline(""); // Clear deadline after adding
+        setNewTaskDeadline(""); 
         setShowModal(false);
+        toast.success("Task added successfully!");
       })
       .catch(error => console.error("Error creating task:", error))
       .finally(() => setLoading(false));
   };
 
-  const handleDeleteTask = (id) => {
-    axios.delete(`apiUrl/${id}`)
-      .then(() => setTasks(prev => prev.filter(task => task.id !== id)))
-      .catch(error => console.error("Error deleting task:", error));
+  const handleDeleteTask = (id: any) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      // If the user confirms, proceed with deletion
+      axios.delete(`https://backendtodolist-production-5d7d.up.railway.app/tasks/${id}`)
+        .then(() => {
+          setTasks((prev: any) => prev.filter((task: any) => task.id !== id));
+          toast.success("Task deleted successfully!");  
+        })
+        .catch(error => {
+          console.error("Error deleting task:", error);
+          toast.error("Failed to delete task.");  
+        });
+    } else {
+     
+      toast.info("Task deletion canceled.");  
+    }
   };
+  
 
   const handleUpdateTask = () => {
-    if (!editTask.content.trim()) return;
-    axios.put(`apiUrl/${editTask.id}`, editTask)
+    if (!(editTask as any).content.trim()) return;
+    axios
+      .put(`https://backendtodolist-production-5d7d.up.railway.app/tasks/${(editTask as any).id}`, editTask)
       .then(() => {
-        setTasks(prev => prev.map(task => task.id === editTask.id ? editTask : task));
+        setTasks((prev: any) => prev.map((task: any) => task.id === (editTask as any).id ? editTask : task));
         setShowEditModal(false);
+        toast.success("Task updated successfully!");
       })
-      .catch(error => console.error("Error updating task:", error));
+      .catch((error: any) => console.error("Error updating task:", error));
   };
-
-  const moveTask = (id, status) => {
-    axios.put(`apiUrl/${id}`, { status })
-      .then(() => setTasks(prev => prev.map(task => task.id === id ? { ...task, status } : task)))
-      .catch(error => console.error("Error moving task:", error));
+  
+  const moveTask = (id: any, status: any) => {
+    axios
+      .put(`https://backendtodolist-production-5d7d.up.railway.app/tasks/${id}`, { status })
+      .then(() => setTasks((prev: any) => prev.map((task: any) => task.id === id ? { ...task, status } : task)))
+      .catch((error: any) => console.error("Error moving task:", error));
   };
+  
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -84,27 +115,35 @@ const TaskBoard = () => {
       </div>
 
       {showModal && <TaskModal onClose={() => setShowModal(false)} onSave={handleCreateTask} value={newTaskContent} onChange={setNewTaskContent} deadline={newTaskDeadline} onDeadlineChange={setNewTaskDeadline} loading={loading} />}
-      {showEditModal && <TaskModal onClose={() => setShowEditModal(false)} onSave={handleUpdateTask} value={editTask.content} onChange={content => setEditTask({ ...editTask, content })} deadline={editTask.deadline} onDeadlineChange={(deadline) => setEditTask({ ...editTask, deadline })} loading={loading} />}
+      {showEditModal && <TaskModal onClose={() => setShowEditModal(false)} onSave={handleUpdateTask} value={editTask.content} onChange={(content: any) => setEditTask({ ...editTask, content })} deadline={editTask.deadline} onDeadlineChange={(deadline: any) => setEditTask({ ...editTask, deadline })} loading={loading} />}
+
+      <ToastContainer />
     </DndProvider>
   );
 };
 
-const TaskColumn = ({ status, tasks, moveTask, setEditTask, setShowEditModal, handleDeleteTask }) => {
-  const [{ isOver }, drop] = useDrop({ accept: "TASK", drop: item => moveTask(item.id, status), collect: monitor => ({ isOver: !!monitor.isOver() }) });
+const TaskColumn = ({ status, tasks, moveTask, setEditTask, setShowEditModal, handleDeleteTask }: any) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  const [{ isOver }, drop] = useDrop({ accept: "TASK", drop: (item: any) => moveTask(item.id, status), collect: monitor => ({ isOver: !!monitor.isOver() }) });
+  drop(ref);
   return (
-    <div ref={drop} className={`p-6 rounded-xl shadow-xl bg-gradient-to-r ${isOver ? "from-orange-200 to-purple-200" : "from-orange-100 to-orange-50"}`}>
+    <div ref={ref} className={`p-6 rounded-xl shadow-xl bg-gradient-to-r ${isOver ? "from-orange-200 to-purple-200" : "from-orange-100 to-orange-50"}`}>
       <h2 className="text-2xl font-bold mb-4 text-orange-600">{status}</h2>
-      {tasks.filter(task => task.status === status).map(task => (
+      {tasks.filter((task: any) => task.status === status).map((task: any) => (
         <TaskCard key={task.id} task={task} setEditTask={setEditTask} setShowEditModal={setShowEditModal} handleDeleteTask={handleDeleteTask} />
       ))}
     </div>
   );
 };
 
-const TaskCard = ({ task, setEditTask, setShowEditModal, handleDeleteTask }) => {
+const TaskCard = ({ task, setEditTask, setShowEditModal, handleDeleteTask }: any) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+
   const [{ isDragging }, drag] = useDrag({ type: "TASK", item: { id: task.id }, collect: monitor => ({ isDragging: !!monitor.isDragging() }) });
+  drag(ref);
   return (
-    <div ref={drag} className={`p-4 mb-4 bg-white rounded-lg shadow-lg flex justify-between items-center ${isDragging ? "opacity-50" : ""}`}>
+    <div ref={ref} className={`p-4 mb-4 bg-white rounded-lg shadow-lg flex justify-between items-center ${isDragging ? "opacity-50" : ""}`}>
       <p className="text-gray-800 flex-1">{task.content}</p>
       {task.deadline && <p className="text-sm text-gray-500">{new Date(task.deadline).toLocaleDateString()}</p>}
       <div className="flex gap-2">
@@ -115,7 +154,7 @@ const TaskCard = ({ task, setEditTask, setShowEditModal, handleDeleteTask }) => 
   );
 };
 
-const TaskModal = ({ onClose, onSave, value, onChange, deadline, onDeadlineChange, loading }) => (
+const TaskModal = ({ onClose, onSave, value, onChange, deadline, onDeadlineChange, loading }: any) => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50 z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 sm:w-1/3">
       <h2 className="text-2xl font-bold mb-4 text-black">{value ? "Edit" : "Add"} Task</h2>
@@ -141,7 +180,5 @@ const TaskModal = ({ onClose, onSave, value, onChange, deadline, onDeadlineChang
     </div>
   </div>
 );
-
-
 
 export default TaskBoard;

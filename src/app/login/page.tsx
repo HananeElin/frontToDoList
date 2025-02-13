@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,10 +11,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-//   const API_URL = process.env.PUBLIC_API_URL;
 
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     // Simple form validation
@@ -26,20 +26,21 @@ const Login = () => {
 
     try {
       // Send login data to the backend
-      const res = await axios.post("https://backendtodolist-production-8d21.up.railway.app/auth/login", { email, password });
+      const res = await axios.post('https://backendtodolist-production-5d7d.up.railway.app/auth/login', { email, password }, {withCredentials: true});
 
       if (res.status === 201) {
         console.log('Logged in successfully!');
+        router.push('/Taskboard');
         localStorage.setItem("userId", res.data.id); // Stocke l'id utilisateur
         setEmail('');
         setPassword('');
-        alert('Logged in successfully!');
-        router.push('/Taskboard');
+        toast.success('Logged in successfully!'); // Show success toast
       }
       
     } catch (err) {
       console.error(err);
       setError('Invalid credentials or something went wrong. Please try again.');
+      toast.error('Invalid credentials or something went wrong.'); // Show error toast
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +85,9 @@ const Login = () => {
           </button>
         </form>
       </div>
+
+      {/* Toast Container to show the notifications */}
+      <ToastContainer />
     </div>
   );
 };
