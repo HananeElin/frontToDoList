@@ -48,7 +48,7 @@ const TaskBoard = () => {
     const fetchTasks = async () => {
       try {
         const response = await axios.get(
-          'https://backendtodolist-production-5d7d.up.railway.app/asks/user/',
+          'https://backendtodolist-production-5d7d.up.railway.app/asks/user/1',
           { withCredentials: true } // Envoie les cookies avec la requête
         );
   
@@ -73,7 +73,7 @@ const TaskBoard = () => {
     try {
       //  recup l'ID utilisateur depuis le backend
       const userResponse = await axios.get(
-        "https://backendtodolist-production-5d7d.up.railway.app/user", 
+        "https://backendtodolist-production-5d7d.up.railway.app/users", 
         { withCredentials: true }
       );
   
@@ -93,7 +93,7 @@ const TaskBoard = () => {
       };
   
       const taskResponse = await axios.post(
-        "https://backendtodolist-production-5d7d.up.railway.app/tasks/user/",
+        "https://backendtodolist-production-5d7d.up.railway.app/tasks/user/1",
         newTask,
         { withCredentials: true }
       );
