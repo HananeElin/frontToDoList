@@ -19,7 +19,7 @@ const TaskBoard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTask, setEditTask] = useState<any>(null);
   
-  const currentUserId = 1;
+  // const currentUserId ;
 
     // Filter tasks based on search query
     const filteredTasks = tasks.filter((task: any)  => task.content.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -37,13 +37,34 @@ const TaskBoard = () => {
   //   }
   // }, []);
 
+  // useEffect(() => {
+  //   if (currentUserId) {
+  //     axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user`, {withCredentials: true})
+  //       .then(response => setTasks(response.data))
+  //       .catch(error => console.error("Error loading tasks:", error));
+  //   }
+  // }, [currentUserId]);
   useEffect(() => {
-    if (currentUserId) {
-      axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user/${currentUserId}`, {withCredentials: true})
-        .then(response => setTasks(response.data))
-        .catch(error => console.error("Error loading tasks:", error));
-    }
-  }, [currentUserId]);
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get(
+          'https://backendtodolist-production-5d7d.up.railway.app/tasks/user',
+          { withCredentials: true } // Envoie les cookies avec la requête
+        );
+  
+        if (response.data.id) {
+          console.log('User ID from cookie:', response.data.id);
+          setTasks(response.data.tasks || []);
+        } else {
+          console.warn('Aucun utilisateur trouvé dans les cookies');
+        }
+      } catch (error) {
+        console.error('Error loading tasks:', error);
+      }
+    };
+  
+    fetchTasks();
+  }, []);
 
   const handleCreateTask = () => {
     if (!newTaskContent.trim()) return;

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FaSignInAlt, FaUserPlus, FaCheck } from "react-icons/fa";
+import { FaSignInAlt, FaUserPlus, FaCheck, FaSignOutAlt } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
@@ -25,6 +25,12 @@ export default function Navbar() {
         >
           <FaSignInAlt /> Log In
         </button>
+        {/* <button 
+          className="bg-white text-black px-4 py-2 rounded-lg shadow-md flex items-center gap-2 hover:bg-gray-200 transition duration-300"
+          onClick={() => router.push("/home")}
+        >
+         <FaSignOutAlt /> Signout
+        </button> */}
       </div>
     </nav>
   );
