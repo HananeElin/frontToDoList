@@ -65,28 +65,51 @@ const TaskBoard = () => {
   
     fetchTasks();
   }, []);
-
-  // const handleCreateTask = () => {
-  //   if (!newTaskContent.trim()) return;
-  //   setLoading(true);
-  //   const newTask = {
-  //     content: newTaskContent,
-  //     status: "TODO",
-  //     userId: currentUserId,
-  //     deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
-  //   };
-  //   axios.post("https://backendtodolist-production-5d7d.up.railway.app/tasks", newTask ,{withCredentials: true})
-  //     .then(response => {
-  //       setTasks((prev: any) => [...prev, response.data]);
-  //       setNewTaskContent("");
-  //       setNewTaskDeadline("");
-  //       setShowModal(false);
-  //       toast.success("Task added successfully!");
-  //     })
-  //     .catch(error => console.error("Error creating task:", error))
-  //     .finally(() => setLoading(false));
-  // };
-
+  const handleCreateTask = async () => {
+    if (!newTaskContent.trim()) return;
+    setLoading(true);
+  
+    try {
+      // recupere lID utilisateur depuis le backend
+      const userResponse = await axios.get(
+        "https://backendtodolist-production-5d7d.up.railway.app/user", 
+        { withCredentials: true }
+      );
+  
+      const userId = userResponse.data.id;
+      if (!userId) {
+        console.warn("Aucun utilisateur trouvé dans les cookies");
+        setLoading(false);
+        return;
+      }
+  
+      //  create task with user id from cookies
+      const newTask = {
+        content: newTaskContent,
+        status: "TODO",
+        userId: userId,
+        deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
+      };
+  
+      const taskResponse = await axios.post(
+        "https://backendtodolist-production-5d7d.up.railway.app/tasks",
+        newTask,
+        { withCredentials: true }
+      );
+  
+      //Mettre à jour task
+      setTasks((prev: any) => [...prev, taskResponse.data]);
+      setNewTaskContent("");
+      setNewTaskDeadline("");
+      setShowModal(false);
+      toast.success("Task added successfully!");
+    } catch (error) {
+      console.error("Error creating task:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const handleDeleteTask = (id: any) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       // If the user confirms, proceed with deletion
