@@ -19,7 +19,7 @@ const TaskBoard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTask, setEditTask] = useState<any>(null);
   
-  const currentUserId = 1;
+  const currentUserId = 12;
 
     // Filter tasks based on search query
     const filteredTasks = tasks.filter((task: any)  => task.content.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -39,8 +39,7 @@ const TaskBoard = () => {
 
   useEffect(() => {
     if (currentUserId) {
-      
-      axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks`, {withCredentials: true})
+      axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user/${currentUserId}`, {withCredentials: true})
         .then(response => setTasks(response.data))
         .catch(error => console.error("Error loading tasks:", error));
     }
