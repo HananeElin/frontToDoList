@@ -19,7 +19,7 @@ const TaskBoard = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editTask, setEditTask] = useState<any>(null);
   
-  // const currentUserId ;
+  const currentUserId = 1;
 
     // Filter tasks based on search query
     const filteredTasks = tasks.filter((task: any)  => task.content.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -37,80 +37,35 @@ const TaskBoard = () => {
   //   }
   // }, []);
 
-  // useEffect(() => {
-  //   if (currentUserId) {
-  //     axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user`, {withCredentials: true})
-  //       .then(response => setTasks(response.data))
-  //       .catch(error => console.error("Error loading tasks:", error));
-  //   }
-  // }, [currentUserId]);
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get(
-          'https://backendtodolist-production-5d7d.up.railway.app/asks/user/1',
-          { withCredentials: true } // Envoie les cookies avec la requête
-        );
-  
-        if (response.data.id) {
-          console.log('User ID from cookie:', response.data.id);
-          setTasks(response.data.tasks || []);
-        } else {
-          console.warn('Aucun utilisateur trouvé dans les cookies');
-        }
-      } catch (error) {
-        console.error('Error loading tasks:', error);
-      }
-    };
-  
-    fetchTasks();
-  }, []);
+    if (currentUserId) {
+      axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user`, {withCredentials: true})
+        .then(response => setTasks(response.data))
+        .catch(error => console.error("Error loading tasks:", error));
+    }
+  }, [currentUserId]);
 
-  const handleCreateTask = async () => {
+  const handleCreateTask = () => {
     if (!newTaskContent.trim()) return;
     setLoading(true);
-  
-    try {
-      //  recup l'ID utilisateur depuis le backend
-      const userResponse = await axios.get(
-        "https://backendtodolist-production-5d7d.up.railway.app/users", 
-        { withCredentials: true }
-      );
-  
-      const userId = userResponse.data.id;
-      if (!userId) {
-        console.warn("Aucun utilisateur trouvé dans les cookies");
-        setLoading(false);
-        return;
-      }
-  
-      //  Créer la tâche avec l'ID recuo
-      const newTask = {
-        content: newTaskContent,
-        status: "TODO",
-        userId: userId, // Utilisation de l'ID rec
-        deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
-      };
-  
-      const taskResponse = await axios.post(
-        "https://backendtodolist-production-5d7d.up.railway.app/tasks/user/1",
-        newTask,
-        { withCredentials: true }
-      );
-  
-      //  Mettre à jour l'état avec la nouvelle tâche
-      setTasks((prev: any) => [...prev, taskResponse.data]);
-      setNewTaskContent("");
-      setNewTaskDeadline("");
-      setShowModal(false);
-      toast.success("Task added successfully!");
-    } catch (error) {
-      console.error("Error creating task:", error);
-    } finally {
-      setLoading(false);
-    }
+    const newTask = {
+      content: newTaskContent,
+      status: "TODO",
+      userId: currentUserId,
+      deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
+    };
+    axios.post("https://backendtodolist-production-5d7d.up.railway.app/tasks", newTask ,{withCredentials: true})
+      .then(response => {
+        setTasks((prev: any) => [...prev, response.data]);
+        setNewTaskContent("");
+        setNewTaskDeadline("");
+        setShowModal(false);
+        toast.success("Task added successfully!");
+      })
+      .catch(error => console.error("Error creating task:", error))
+      .finally(() => setLoading(false));
   };
-  
+
   const handleDeleteTask = (id: any) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       // If the user confirms, proceed with deletion
