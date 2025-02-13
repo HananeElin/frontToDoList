@@ -48,7 +48,7 @@ const TaskBoard = () => {
     const fetchTasks = async () => {
       try {
         const response = await axios.get(
-          'https://backendtodolist-production-5d7d.up.railway.app/tasks/user/',
+          'https://backendtodolist-production-5d7d.up.railway.app/asks/user/',
           { withCredentials: true } // Envoie les cookies avec la requête
         );
   
@@ -71,7 +71,7 @@ const TaskBoard = () => {
     setLoading(true);
   
     try {
-      // 1️⃣ Récupérer l'ID utilisateur depuis le backend
+      //  recup l'ID utilisateur depuis le backend
       const userResponse = await axios.get(
         "https://backendtodolist-production-5d7d.up.railway.app/user", 
         { withCredentials: true }
@@ -84,11 +84,11 @@ const TaskBoard = () => {
         return;
       }
   
-      // 2️⃣ Créer la tâche avec l'ID récupéré
+      //  Créer la tâche avec l'ID recuo
       const newTask = {
         content: newTaskContent,
         status: "TODO",
-        userId: userId, // Utilisation de l'ID récupéré
+        userId: userId, // Utilisation de l'ID rec
         deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
       };
   
@@ -98,7 +98,7 @@ const TaskBoard = () => {
         { withCredentials: true }
       );
   
-      // 3️⃣ Mettre à jour l'état avec la nouvelle tâche
+      //  Mettre à jour l'état avec la nouvelle tâche
       setTasks((prev: any) => [...prev, taskResponse.data]);
       setNewTaskContent("");
       setNewTaskDeadline("");
