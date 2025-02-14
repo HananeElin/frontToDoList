@@ -39,7 +39,7 @@ const TaskBoard = () => {
 
   useEffect(() => {
     if (currentUserId) {
-      axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user`, {withCredentials: true})
+      axios.get(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user/${currentUserId}`, {withCredentials: true})
         .then(response => setTasks(response.data))
         .catch(error => console.error("Error loading tasks:", error));
     }
