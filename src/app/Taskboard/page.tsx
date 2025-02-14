@@ -75,7 +75,7 @@ const TaskBoard = () => {
       userId: currentUserId,
       deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
     };
-    axios.post(`https://backendtodolist-production-5d7d.up.railway.app/tasks`, newTask, {withCredentials: true})
+    axios.post(`https://backendtodolist-production-5d7d.up.railway.app/tasks/create`, newTask, {withCredentials: true})
       .then(response => {
         setTasks((prev: any) => [...prev, response.data]);
         setNewTaskContent("");
@@ -136,7 +136,7 @@ const TaskBoard = () => {
             placeholder="Search tasks"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="p-2 border rounded-lg w-72 text-black" // Set text color to black
+            className="p-2 border rounded-lg w-72 text-black" 
           />
           {/* Add Task Button */}
           <button className="bg-black text-white p-2 rounded-lg ml-auto" onClick={() => setShowModal(true)}>
