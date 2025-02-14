@@ -75,7 +75,7 @@ const TaskBoard = () => {
       userId: currentUserId,
       deadline: newTaskDeadline ? new Date(newTaskDeadline) : null
     };
-    axios.post(`https://backendtodolist-production-5d7d.up.railway.app/tasks/${currentUserId}`, newTask, {withCredentials: true})
+    axios.post(`https://backendtodolist-production-5d7d.up.railway.app/tasks/user/${currentUserId}`, newTask, {withCredentials: true})
       .then(response => {
         setTasks((prev: any) => [...prev, response.data]);
         setNewTaskContent("");
