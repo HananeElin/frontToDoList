@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!response.ok) throw new Error("Invalid credentials");
 
       const data = await response.json();
-      // localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
+      localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
       setUser(data.user);
       router.push("/dashboard"); // Redirect after login
     } catch (error) {
