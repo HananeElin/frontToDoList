@@ -9,6 +9,8 @@ export default function Navbar() {
 
   const { user, logout } = useAuth();
 
+  //gey the pathanme of url 
+  
 
 
   useEffect(() => {
