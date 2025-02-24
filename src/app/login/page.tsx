@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -6,6 +7,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,12 +16,14 @@ const Login = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+   
 
     // Simple form validation
     if (!email || !password) {
       setError('Email and password are required');
       return;
     }
+    await login(email, password);
 
     setIsLoading(true);
     setError(''); // Clear any previous error
