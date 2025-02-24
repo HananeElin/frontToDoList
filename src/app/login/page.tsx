@@ -1,50 +1,57 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-   
 
-    // Simple form validation
+    // Validation simple
     if (!email || !password) {
-      setError('Email and password are required');
+      setError("Email and password are required");
+      toast.error("Email and password are required");
       return;
     }
-    await login(email, password);
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Invalid email format");
+      toast.error("Invalid email format");
+      return;
+    }
 
     setIsLoading(true);
-    setError(''); // Clear any previous error
+    setError("");
 
     try {
-      // Send login data to the backend
-      const res = await axios.post('https://backendtodolist-production-5d7d.up.railway.app/auth/login', { email, password }, {withCredentials: true});
+      // Envoi de la requête à l’API
+      const res = await axios.post(
+        "https://backendtodolist-production-5d7d.up.railway.app/auth/login",
+        { email, password },
+        { withCredentials: true }
+      );
 
       if (res.status === 201) {
-        console.log('Logged in successfully!');
-        router.push('/Taskboard');
-        localStorage.setItem("userId", res.data.id); // Stocke l'id utilisateur
-        setEmail('');
-        setPassword('');
-        toast.success('Logged in successfully!'); // Show success toast
+        localStorage.setItem("user", JSON.stringify(res.data.user)); // Stocke tout l'utilisateur
+        router.push("/Taskboard");
+        setEmail("");
+        setPassword("");
+        toast.success("Logged in successfully!");
       }
-      
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Invalid credentials or something went wrong. Please try again.');
-      toast.error('Invalid credentials or something went wrong.'); // Show error toast
+      setError("Invalid credentials or something went wrong.");
+      toast.error("Invalid credentials or something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -85,12 +92,12 @@ const Login = () => {
             className="w-full p-3 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none"
             disabled={isLoading}
           >
-            {isLoading ? 'Logging in...' : 'Log In'}
+            {isLoading ? "Logging in..." : "Log In"}
           </button>
         </form>
       </div>
 
-      {/* Toast Container to show the notifications */}
+      {/* Toast Container pour afficher les notifications */}
       <ToastContainer />
     </div>
   );
