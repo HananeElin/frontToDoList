@@ -9,7 +9,7 @@ export default function Navbar() {
   return (
     <nav className="bg-black p-4 flex justify-between items-center shadow-md">
       <button className="text-white font-semibold text-xl flex items-center gap-2"
-        onClick={() => router.push("/home")}>
+        onClick={() => router.push("/dashboard")}>
         To Do <FaCheck />
       </button>
       <div className="flex space-x-2">
@@ -25,12 +25,12 @@ export default function Navbar() {
         >
           <FaSignInAlt /> Log In
         </button>
-        {/* <button 
+        <button 
           className="bg-white text-black px-4 py-2 rounded-lg shadow-md flex items-center gap-2 hover:bg-gray-200 transition duration-300"
           onClick={() => router.push("/home")}
         >
          <FaSignOutAlt /> Signout
-        </button> */}
+        </button>
       </div>
     </nav>
   );
