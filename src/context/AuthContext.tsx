@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const data = await response.json();
       localStorage.setItem("user", JSON.stringify(data.user)); // Store user info
       setUser(data.user);
-      router.push("/Taskboard"); // Redirect after login to the taskborad
+      router.push("/Taskboard"); // Redirect after login
     } catch (error) {
       console.error(error);
     }
@@ -56,8 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (!response.ok) throw new Error("Registration failed");
 
-      await login(email, password); // Auto-login after registration 
-      // router.push("/login")//redirect to the login page 
+      await login(email, password); // Auto-login after registration
     } catch (error) {
       console.error(error);
     }
